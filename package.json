@@ -1,5 +1,5 @@
 {
-  "name": "cs-f372_sc",
+  "name": "umovie",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
@@ -8,9 +8,12 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
     "mongodb": "^4.17.2"
+  },
+  "description": "Full-stack movie streaming and management platform (Node.js, Express, MongoDB)",
+  "engines": {
+    "node": ">=18"
   }
 }

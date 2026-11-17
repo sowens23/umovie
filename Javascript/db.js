@@ -9,7 +9,7 @@ async function connectDB() {
   try {
     await client.connect();
     console.log('✅ Connected to MongoDB!');
-    return client.db(); // 会自动从 URI 中取 moviehub
+    return client.db(); // Uses the database name from the URI (moviehub)
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
   }

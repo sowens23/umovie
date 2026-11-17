@@ -7,7 +7,8 @@ const path = require("path");
 const fs = require("fs"); // Ensure the `fs` module is also imported for file operations
 
 function hash(password, salt) {
-  return crypto.createHash('sha256').update(password + salt).digest('hex');
+  // scrypt is a deliberately slow, memory-hard password hash (resists brute force better than SHA-256)
+  return crypto.scryptSync(password, salt, 64).toString('hex');
 }
 
 function generateSalt() {
@@ -16,7 +17,6 @@ function generateSalt() {
 
 // Register.js
 exports.register = async (req, res) => {
-  console.log("Received request", req.body);
   const { username, email, password, roles = [] } = req.body; // Default roles to an empty array
   const db = await connectDB();
   const users = db.collection('users');
@@ -120,7 +120,6 @@ exports.login = async (req, res) => {
     }
 
     res.json({ success: true, message: 'Login successful', redirect: redirectPage });
-    console.log("Session data:", req.session);
   } else {
     res.json({ success: false, message: 'Wrong password' });
   }
@@ -741,4 +740,19 @@ exports.importMovies = async (req, res) => {
     console.error("❌ Error in importMovies API:", error);
     res.status(500).json({ success: false, message: "Internal server error." });
   }
+};
+
+// ======================== Get a movie's video file path ========================
+exports.getFilePath = async (req, res) => {
+  const { title } = req.body;
+  if (!title) {
+    return res.status(400).json({ success: false, message: "Missing movie title" });
+  }
+
+  const db = await connectDB();
+  const movie = await db.collection("movies").findOne({ title });
+  if (!movie || !movie.filepath) {
+    return res.status(404).json({ success: false, message: "Movie not found" });
+  }
+  res.json({ success: true, filePath: movie.filepath });
 };
